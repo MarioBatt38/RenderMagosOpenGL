@@ -55,8 +55,8 @@ struct PointLight {
 #pragma region Global variables
 
 // Window size
-unsigned int		windowWidth = 1024;
-unsigned int		windowHeight = 768;
+unsigned int		windowWidth = 1920;
+unsigned int		windowHeight = 1080;
 
 // Main clock for tracking time (for animation / interaction)
 GUClock*			gameClock = nullptr;
@@ -91,8 +91,16 @@ AIMesh*				magosShrineBoardMesh = nullptr;
 AIMesh*				magosSingleRockMesh = nullptr;
 AIMesh*				magosClusterRockMesh = nullptr;
 AIMesh*				magosBlackSandTileMesh = nullptr;
+AIMesh*				magosMapMesh = nullptr;
 
 //Magos Buildings
+AIMesh*				astraOutpostMesh = nullptr;
+AIMesh*				astraSettlementMesh = nullptr;
+AIMesh*				astraBrigadeMesh = nullptr;
+
+
+
+
 
 //Magos Characters
 AIMesh*				starForgerMesh = nullptr;
@@ -265,28 +273,56 @@ int main() {
 	//
 	// Setup Textures, VBOs and other scene objects
 	//
-	mainCamera = new ArcballCamera(-45.0f, 230.0f, 45.0f, 75.0f, (float)windowWidth/(float)windowHeight, 0.1f, 5000.0f);
+	mainCamera = new ArcballCamera(-45.0f, 230.0f, 30.0f, 75.0f, (float)windowWidth/(float)windowHeight, 0.1f, 5000.0f);
 	
 	groundMesh = new AIMesh(string("Assets\\ground-surface\\surface01.obj"));
 	if (groundMesh) {
 		groundMesh->addTexture("Assets\\ground-surface\\lunar-surface01.png", FIF_PNG);
 	}
 
+	//
+	//Characters
+	//
 	creatureMesh = new AIMesh(string("Assets\\beast\\beast.obj"));
 	if (creatureMesh) {
 		creatureMesh->addTexture(string("Assets\\beast\\beast_texture.bmp"), FIF_BMP);
 	}
 
+
 	starForgerMesh = new AIMesh(string("Assets\\StarForger\\StarForger.obj"));
 	if (starForgerMesh) {
 		starForgerMesh->addTexture(string("Assets\\StarForger\\StarForger_Texture.bmp"), FIF_BMP);
 	}
+
+	//
+	//Buildings
+	//
 	
 	columnMesh = new AIMesh(string("Assets\\column\\Column.obj"));
 	if (columnMesh) {
 		columnMesh->addTexture(string("Assets\\column\\column_d.bmp"), FIF_BMP);
 		columnMesh->addNormalMap(string("Assets\\column\\column_n.bmp"), FIF_BMP);
 	}
+
+	astraOutpostMesh = new AIMesh(string("Assets\\MagosAstraBuildings\\Astra_Outpost_Mesh.obj"));
+	if (astraOutpostMesh) {
+		astraOutpostMesh->addTexture(string("Assets\\MagosAstraBuildings\\Astra_Buildings_Textures.bmp"), FIF_BMP);
+	}
+
+	astraSettlementMesh = new AIMesh(string("Assets\\MagosAstraBuildings\\Astra_Settlement_Mesh.obj"));
+	if (astraSettlementMesh) {
+		astraSettlementMesh->addTexture(string("Assets\\MagosAstraBuildings\\Astra_Buildings_Textures.bmp"), FIF_BMP);
+	}
+
+	astraBrigadeMesh = new AIMesh(string("Assets\\MagosAstraBuildings\\Astra_Brigade_Mesh.obj"));
+	if (astraBrigadeMesh) {
+		astraBrigadeMesh->addTexture(string("Assets\\MagosAstraBuildings\\Astra_Buildings_Textures.bmp"), FIF_BMP);
+	}
+
+
+	//
+	//Terrain
+	//
 
 	magosgroundMesh = new AIMesh(string("Assets\\MagosGroundPlane\\magosGround_Mesh.obj"));
 	if (magosgroundMesh) {
@@ -317,13 +353,20 @@ int main() {
 	magosSingleRockMesh = new AIMesh(string("Assets\\MagosTerrainBoard\\MagosSingleRock_Mesh.obj"));
 	if (magosSingleRockMesh) {
 		magosSingleRockMesh->addTexture(string("Assets\\MagosTerrainBoard\\MagosRock_1k_Texture_DiffuseMap.bmp"), FIF_BMP);
-		magosSingleRockMesh->addNormalMap(string("Assets\\MagosGroundPlane\\MagosRock_1k_Texture_NormalMap.bmp"), FIF_BMP);
+		magosSingleRockMesh->addNormalMap(string("Assets\\MagosTerrainBoard\\MagosRock_1k_Texture_NormalMap.bmp"), FIF_BMP);
 	}
 
-	magosClusterRockMesh = new AIMesh(string("Assets\\MagosTerrainBoard\\MagosShrineBoard_Mesh.obj"));
+	magosClusterRockMesh = new AIMesh(string("Assets\\MagosTerrainBoard\\MagosClusterRock_Mesh.obj"));
 	if (magosClusterRockMesh) {
-		magosClusterRockMesh->addTexture(string("Assets\\MagosTerrainBoard\\MagosTerrainBoard_Texture.bmp"), FIF_BMP);
+		magosClusterRockMesh->addTexture(string("Assets\\MagosTerrainBoard\\MagosRockCluster_Texture_DiffuseMap.bmp"), FIF_BMP);
+		magosClusterRockMesh ->addNormalMap(string("Assets\\MagosTerrainBoard\\MagosRockCluster_Texture_NormalMap.bmp"), FIF_BMP);
 	}
+
+	magosMapMesh = new AIMesh(string("Assets\\MagosTerrainBoard\\surface01.obj"));
+	if (magosClusterRockMesh) {
+		magosClusterRockMesh->addTexture(string("Assets\\MagosTerrainBoard\\magosMap_Texture.png"), FIF_BMP);
+	}
+
 
 
 
@@ -474,7 +517,7 @@ void renderWithMultipleLights() {
 
 	// Get camera matrices
 	mat4 cameraProjection = mainCamera->projectionTransform();
-	mat4 cameraView = mainCamera->viewTransform() * translate(identity<mat4>(), -beastPos);
+	mat4 cameraView = mainCamera->viewTransform();
 
 
 #pragma region Render all opaque objects with directional light
@@ -488,7 +531,7 @@ void renderWithMultipleLights() {
 	glUniform3fv(texDirLightShader_lightColour, 1, (GLfloat*)&(directLight.colour));
 
 	
-
+	//Characters
 	if (creatureMesh) {
 
 		mat4 modelTransform = glm::translate(identity<mat4>(), beastPos) * eulerAngleY<float>(glm::radians<float>(beastRotation));
@@ -510,6 +553,36 @@ void renderWithMultipleLights() {
 	}
 
 
+	//Buildings
+
+	
+	if (astraOutpostMesh) {
+
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(-40.0f, 0.0f, -13.0f)) * eulerAngleY<float>(glm::radians<float>(-90.0f)) * glm::scale(identity<mat4>(), vec3(0.5f, 0.5f, 0.5f));
+
+		glUniformMatrix4fv(texDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
+
+
+		astraOutpostMesh->setupTextures();
+		astraOutpostMesh->render();
+	}
+	
+
+
+	if (astraBrigadeMesh) {
+
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(0.5f, -10.7f, 8.0f)) * eulerAngleY<float>(glm::radians<float>(-90.0f)) * glm::scale(identity<mat4>(), vec3(0.5f, 0.5f, 0.5f));
+
+		glUniformMatrix4fv(texDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
+
+
+		astraBrigadeMesh->setupTextures();
+		astraBrigadeMesh->render();
+	}
+	
+
+
+	//Terrain
 	if (magosBoardMesh) {
 
 		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(16.5f, -0.7f, 15.0f)) * glm::scale(identity<mat4>(), vec3(1.5f, 1.0f, 1.5f));
@@ -543,6 +616,17 @@ void renderWithMultipleLights() {
 		magosShrineBoardMesh->render();
 	}
 
+	if (magosMap_Mesh) {
+
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(0.5f, -0.7f, 15.0f)) * glm::scale(identity<mat4>(), vec3(1.0f, 0.5f, 1.0f));
+
+		glUniformMatrix4fv(texDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
+
+
+		magosShrineBoardMesh->setupTextures();
+		magosShrineBoardMesh->render();
+	}
+
 
 
 
@@ -563,7 +647,7 @@ void renderWithMultipleLights() {
 
 	if (magosgroundMesh) {
 
-		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(1.0f, -0.6f, 0.0f)) * glm::scale(identity<mat4>(), vec3(0.50f, 0.25f, 0.50f));
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(6.0f, -0.6f, 4.75f)) * glm::scale(identity<mat4>(), vec3(0.55f, 0.25f, 0.52f));
 
 		glUniformMatrix4fv(nMapDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
 
@@ -573,12 +657,24 @@ void renderWithMultipleLights() {
 
 	if (magosSingleRockMesh) {
 
-		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(1.0f, -0.6f, 0.0f)) * glm::scale(identity<mat4>(), vec3(1.0f, 1.0f, 1.0f));
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(1.0f, -2.0f, 0.0f)) * glm::scale(identity<mat4>(), vec3(0.5f, 0.5f, 0.5f));
 
 		glUniformMatrix4fv(nMapDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
 
 		magosSingleRockMesh->setupTextures();
 		magosSingleRockMesh->render();
+	}
+
+
+
+	if (magosClusterRockMesh) {
+
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(2.0f, -1.1f, 12.0f)) * eulerAngleY<float>(glm::radians<float>(90.0f)) * glm::scale(identity<mat4>(), vec3(0.3f, 0.3f, 0.3f));
+
+		glUniformMatrix4fv(nMapDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
+
+		magosClusterRockMesh->setupTextures();
+		magosClusterRockMesh->render();
 	}
 
 
@@ -711,24 +807,24 @@ void updateScene() {
 
 	if (forwardPressed) {
 
-		mat4 R = eulerAngleY<float>(glm::radians<float>(beastRotation)); // local coord space / basis vectors - move along z
+		mat4 R = eulerAngleY<float>(glm::radians<float>(starForgerRotation)); // local coord space / basis vectors - move along z
 		float dPos = moveSpeed * tDelta; // calc movement based on time elapsed
-		beastPos += vec3(R[2].x * dPos, R[2].y * dPos, R[2].z * dPos); // add displacement to position vector
+		starForgerPos += vec3(R[2].x * dPos, R[2].y * dPos, R[2].z * dPos); // add displacement to position vector
 	}
 	else if (backPressed) {
 
-		mat4 R = eulerAngleY<float>(glm::radians<float>(beastRotation)); // local coord space / basis vectors - move along z
+		mat4 R = eulerAngleY<float>(glm::radians<float>(starForgerRotation)); // local coord space / basis vectors - move along z
 		float dPos = -moveSpeed * tDelta; // calc movement based on time elapsed
-		beastPos += vec3(R[2].x * dPos, R[2].y * dPos, R[2].z * dPos); // add displacement to position vector
+		starForgerPos += vec3(R[2].x * dPos, R[2].y * dPos, R[2].z * dPos); // add displacement to position vector
 	}
 
 	if (rotateLeftPressed) {
 
-		beastRotation += rotateSpeed * tDelta;
+		starForgerRotation += rotateSpeed * tDelta;
 	}
 	else if (rotateRightPressed) {
 
-		beastRotation -= rotateSpeed * tDelta;
+		starForgerRotation -= rotateSpeed * tDelta;
 	}
 
 }
