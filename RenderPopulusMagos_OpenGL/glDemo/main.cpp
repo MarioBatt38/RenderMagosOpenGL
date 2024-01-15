@@ -92,6 +92,8 @@ AIMesh*				magosSingleRockMesh = nullptr;
 AIMesh*				magosClusterRockMesh = nullptr;
 AIMesh*				magosBlackSandTileMesh = nullptr;
 AIMesh*				magosMapMesh = nullptr;
+AIMesh*				magosBlackSandMesh = nullptr;
+AIMesh*				magosCrystalMesh = nullptr;
 
 //Magos Buildings
 AIMesh*				astraOutpostMesh = nullptr;
@@ -363,9 +365,21 @@ int main() {
 	}
 
 	magosMapMesh = new AIMesh(string("Assets\\MagosTerrainBoard\\surface01.obj"));
-	if (magosClusterRockMesh) {
-		magosClusterRockMesh->addTexture(string("Assets\\MagosTerrainBoard\\magosMap_Texture.png"), FIF_BMP);
+	if (magosMapMesh) {
+		magosMapMesh->addTexture(string("Assets\\MagosTerrainBoard\\magosMap_Texture.bmp"), FIF_BMP);
 	}
+
+	magosBlackSandMesh = new AIMesh(string("Assets\\MagosGroundPlane\\MagosBlackSand_Mesh.obj"));
+	if (magosBlackSandMesh) {
+		magosBlackSandMesh->addTexture(string("Assets\\MagosGroundPlane\\MagosBlackSand_DiffuseMap.bmp"), FIF_BMP);
+		magosBlackSandMesh->addNormalMap(string("Assets\\MagosGroundPlane\\MagosBlackSand_NormalMap.bmp"), FIF_BMP);
+	}
+
+	magosCrystalMesh = new AIMesh(string("Assets\\MagosGroundPlane\\magosCrystal_Mesh.obj"));
+	if (magosCrystalMesh) {
+		magosCrystalMesh->addTexture(string("Assets\\MagosGroundPlane\\Crystal_Texture.bmp"), FIF_BMP);
+	}
+
 
 
 
@@ -596,7 +610,7 @@ void renderWithMultipleLights() {
 
 	if (magosMapBoardMesh) {
 
-		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(-20.5f, -1.7f, 10.0f)) * glm::scale(identity<mat4>(), vec3(1.5f, 1.0f, 1.5f));
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(-2.0f, -1.0f, 0.0f)) * glm::scale(identity<mat4>(), vec3(0.7f, 0.3f, 0.7f));
 
 		glUniformMatrix4fv(texDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
 
@@ -607,7 +621,7 @@ void renderWithMultipleLights() {
 
 	if (magosShrineBoardMesh) {
 
-		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(0.5f, -0.7f, 15.0f)) * glm::scale(identity<mat4>(), vec3(1.0f, 0.5f, 1.0f));
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(0.5f, -0.7f, -10.0f)) * glm::scale(identity<mat4>(), vec3(1.0f, 0.5f, 1.0f));
 
 		glUniformMatrix4fv(texDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
 
@@ -616,15 +630,26 @@ void renderWithMultipleLights() {
 		magosShrineBoardMesh->render();
 	}
 
-	if (magosMap_Mesh) {
+	if (magosMapMesh) {
 
-		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(0.5f, -0.7f, 15.0f)) * glm::scale(identity<mat4>(), vec3(1.0f, 0.5f, 1.0f));
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(45.0f, 0.2f, 0.0f)) * glm::scale(identity<mat4>(), vec3(15.0f, 0.5f, 15.0f));
 
 		glUniformMatrix4fv(texDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
 
 
-		magosShrineBoardMesh->setupTextures();
-		magosShrineBoardMesh->render();
+		magosMapMesh->setupTextures();
+		magosMapMesh->render();
+	}
+
+	if (magosCrystalMesh) {
+
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(-13.0f, 0.2f, 21.0f)) * glm::scale(identity<mat4>(), vec3(0.15f, 0.2f, 0.15f));
+
+		glUniformMatrix4fv(texDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
+
+
+		magosCrystalMesh->setupTextures();
+		magosCrystalMesh->render();
 	}
 
 
@@ -677,6 +702,16 @@ void renderWithMultipleLights() {
 		magosClusterRockMesh->render();
 	}
 
+	if (magosBlackSandMesh) {
+
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(-18.0f, -0.5f, 17.0f)) * eulerAngleY<float>(glm::radians<float>(90.0f)) * glm::scale(identity<mat4>(), vec3(0.3f, 0.3f, 0.3f));
+
+		glUniformMatrix4fv(nMapDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
+
+		magosBlackSandMesh->setupTextures();
+		magosBlackSandMesh->render();
+	}
+
 
 #pragma endregion
 
@@ -724,7 +759,15 @@ void renderWithMultipleLights() {
 		magosgroundMesh->render();
 	}
 	
-	
+	if (magosBlackSandMesh) {
+
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(2.0f, 2.0f, 12.0f)) * eulerAngleY<float>(glm::radians<float>(90.0f)) * glm::scale(identity<mat4>(), vec3(0.3f, 0.3f, 0.3f));
+
+		glUniformMatrix4fv(nMapDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
+
+		magosBlackSandMesh->setupTextures();
+		magosBlackSandMesh->render();
+	}
 
 
 
