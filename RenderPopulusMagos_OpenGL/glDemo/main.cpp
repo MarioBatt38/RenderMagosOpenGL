@@ -100,7 +100,8 @@ AIMesh*				astraOutpostMesh = nullptr;
 AIMesh*				astraSettlementMesh = nullptr;
 AIMesh*				astraBrigadeMesh = nullptr;
 
-
+//Magos Background
+AIMesh*		magosSpaceBGMesh = nullptr;
 
 
 
@@ -380,8 +381,14 @@ int main() {
 		magosCrystalMesh->addTexture(string("Assets\\MagosGroundPlane\\Crystal_Texture.bmp"), FIF_BMP);
 	}
 
-
-
+	//
+	//Background
+	//
+	 
+	magosSpaceBGMesh = new AIMesh(string("Assets\\MagosBackGround\\surface01.obj"));
+	if (magosSpaceBGMesh) {
+		magosSpaceBGMesh->addTexture(string("Assets\\MagosBackGround\\MagosBG_Texture.bmp"), FIF_BMP);
+	}
 
 
 	cylinderMesh = new Cylinder(string("Assets\\cylinder\\cylinderT.obj"));
@@ -652,8 +659,40 @@ void renderWithMultipleLights() {
 		magosCrystalMesh->render();
 	}
 
+	//Background
+
+	if (magosSpaceBGMesh) {
+
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(20.0f, 0.2f, 60.0f))* eulerAngleX<float>(glm::radians<float>(-80.0f)) * glm::scale(identity<mat4>(), vec3(100.0f, 1.0f, 50.0f));
+
+		glUniformMatrix4fv(texDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
 
 
+		magosSpaceBGMesh->setupTextures();
+		magosSpaceBGMesh->render();
+	}
+
+	if (magosSpaceBGMesh) {
+
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(70.0f, 0.2f, 20.0f)) * eulerAngleZ<float>(glm::radians<float>(80.0f)) * glm::scale(identity<mat4>(), vec3(50.0f, 1.0f, 100.0f));
+
+		glUniformMatrix4fv(texDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
+
+
+		magosSpaceBGMesh->setupTextures();
+		magosSpaceBGMesh->render();
+	}
+
+	if (magosSpaceBGMesh) {
+
+		mat4 modelTransform = glm::translate(identity<mat4>(), vec3(20.0f, -48.0f, 20.0f))  * glm::scale(identity<mat4>(), vec3(100.0f, 1.0f, 100.0f));
+
+		glUniformMatrix4fv(texDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
+
+
+		magosSpaceBGMesh->setupTextures();
+		magosSpaceBGMesh->render();
+	}
 
 	//  *** normal mapping ***  Render the normal mapped MagosGround
 	// Plug in the normal map directional light shader
@@ -746,7 +785,15 @@ void renderWithMultipleLights() {
 		creatureMesh->render();
 	}
 
-	
+	if (starForgerMesh) {
+
+		mat4 modelTransform = glm::translate(identity<mat4>(), starForgerPos) * eulerAngleY<float>(glm::radians<float>(starForgerRotation));
+
+		glUniformMatrix4fv(texPointLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
+
+		starForgerMesh->setupTextures();
+		starForgerMesh->render();
+	}
 	
 
 	if (magosgroundMesh) {
