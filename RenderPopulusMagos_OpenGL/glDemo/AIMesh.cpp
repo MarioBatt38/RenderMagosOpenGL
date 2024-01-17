@@ -122,17 +122,6 @@ void AIMesh::addNormalMap(std::string filename, FREE_IMAGE_FORMAT format) {
 	normalMapID = loadTexture(filename, format);
 }
 
-// ***normal mapping*** - helper functions at add normal map image to the object
-void AIMesh::addRoughnessMap(GLuint roughnessID) {
-
-	this->roughnessMapID = roughnessMapID;
-}
-
-void AIMesh::addRoughnessMap(std::string filename, FREE_IMAGE_FORMAT format) {
-
-	roughnessMapID = loadTexture(filename, format);
-}
-
 
 // Rendering functions
 

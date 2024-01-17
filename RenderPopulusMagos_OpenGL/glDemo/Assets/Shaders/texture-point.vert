@@ -8,6 +8,7 @@ layout (location=0) in vec3 vertexPos;
 layout (location=2) in vec3 vertexTexCoord;
 layout (location=3) in vec3 vertexNormal;
 
+
 out SimplePacket {
 
   vec3 surfaceWorldPos;
