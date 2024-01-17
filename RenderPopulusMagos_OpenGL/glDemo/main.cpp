@@ -159,7 +159,7 @@ vec3 cylinderPos = vec3(-2.0f, 2.0f, 0.0f);
 vec3 starForgerPos = vec3(1.0f, 0.0f, -10.0f);
 float starForgerRotation = 0.0f;
 
-// StarForger model
+// StarWalker model
 vec3 starWalkerPos = vec3(7.0f, 0.0f, 0.0f);
 float starWalkerRotation = 0.0f;
 
