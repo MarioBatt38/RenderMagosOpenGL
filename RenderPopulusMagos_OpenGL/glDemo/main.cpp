@@ -11,7 +11,7 @@
 using namespace std;
 using namespace glm;
 
-
+//Directional Light
 struct DirectionalLight {
 
 	vec3 direction;
@@ -30,6 +30,7 @@ struct DirectionalLight {
 	}
 };
 
+//Point Light Setup
 struct PointLight {
 
 	vec3 pos;
@@ -85,11 +86,6 @@ bool				starWalkerSelected = false;
 // Scene objects
 //
 
-AIMesh*				groundMesh = nullptr;
-AIMesh*				creatureMesh = nullptr;
-AIMesh*				columnMesh = nullptr;
-
-
 //Magos Terrain
 AIMesh*				magosgroundMesh = nullptr;
 AIMesh*				magosBoardMesh = nullptr;
@@ -133,16 +129,6 @@ GLint				texDirLightShader_texture;
 GLint				texDirLightShader_lightDirection;
 GLint				texDirLightShader_lightColour;
 
-// Texture-point light shader
-GLuint				texPointLightShader;
-GLint				texPointLightShader_modelMatrix;
-GLint				texPointLightShader_viewMatrix;
-GLint				texPointLightShader_projMatrix;
-GLint				texPointLightShader_texture;
-GLint				texPointLightShader_lightPosition;
-GLint				texPointLightShader_lightColour;
-GLint				texPointLightShader_lightAttenuation;
-
 //  *** normal mapping *** Normal mapped texture with Directional light
 // This is the same as the texture direct light shader above, but with the addtional uniform variable
 // to set the normal map sampler2D variable in the fragment shader.
@@ -155,7 +141,15 @@ GLint				nMapDirLightShader_normalMapTexture;
 GLint				nMapDirLightShader_lightDirection;
 GLint				nMapDirLightShader_lightColour;
 
-
+// Texture-point light shader
+GLuint				texPointLightShader;
+GLint				texPointLightShader_modelMatrix;
+GLint				texPointLightShader_viewMatrix;
+GLint				texPointLightShader_projMatrix;
+GLint				texPointLightShader_texture;
+GLint				texPointLightShader_lightPosition;
+GLint				texPointLightShader_lightColour;
+GLint				texPointLightShader_lightAttenuation;
 
 
 // cylinder model //delete
@@ -271,7 +265,11 @@ int main() {
 	//
 	// Setup Textures, VBOs and other scene objects
 	//
-	mainCamera = new ArcballCamera(-45.0f, 230.0f, 30.0f, 75.0f, (float)windowWidth/(float)windowHeight, 0.1f, 5000.0f);
+
+	//
+	// Game Camera
+	//
+	mainCamera = new ArcballCamera(-45.0f, 225.0f, 30.0f, 75.0f, (float)windowWidth/(float)windowHeight, 0.1f, 5000.0f);
 	
 	
 
@@ -294,11 +292,6 @@ int main() {
 	//Buildings
 	//
 	
-	columnMesh = new AIMesh(string("Assets\\column\\Column.obj"));
-	if (columnMesh) {
-		columnMesh->addTexture(string("Assets\\column\\column_d.bmp"), FIF_BMP);
-		columnMesh->addNormalMap(string("Assets\\column\\column_n.bmp"), FIF_BMP);
-	}
 
 	astraOutpostMesh = new AIMesh(string("Assets\\MagosAstraBuildings\\Astra_Outpost_Mesh.obj"));
 	if (astraOutpostMesh) {
